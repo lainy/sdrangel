@@ -212,6 +212,7 @@ private slots:
     void on_traceView_toggled(bool checked);
     void on_traceColor_clicked();
     void on_mem_valueChanged(int value);
+    void on_saveTrace_clicked();
     // Third row
     void on_trig_valueChanged(int value);
     void on_trigAdd_clicked(bool checked);

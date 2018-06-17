@@ -767,6 +767,13 @@ void GLScopeNGGUI::on_mem_valueChanged(int value)
    	m_scopeVis->setMemoryIndex(value);
 }
 
+void GLScopeNGGUI::on_saveTrace_clicked()
+{
+
+    //TODO: Save things.
+
+}
+
 void GLScopeNGGUI::on_trigMode_currentIndexChanged(int index __attribute__((unused)))
 {
     setTrigLevelDisplay();
@@ -1211,6 +1218,7 @@ void GLScopeNGGUI::disableLiveMode(bool disable)
     ui->trigPre->setEnabled(!disable);
     ui->trigOneShot->setEnabled(!disable);
     ui->freerun->setEnabled(!disable);
+    ui->saveTrace->setEnabled(disable);
 }
 
 void GLScopeNGGUI::fillTraceData(ScopeVisNG::TraceData& traceData)
