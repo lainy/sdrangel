@@ -175,6 +175,25 @@ void ScopeVisNG::setMemoryIndex(uint32_t memoryIndex)
     getInputMessageQueue()->push(cmd);
 }
 
+std::vector<Sample> ScopeVisNG::getCurrentSampleBuffer()
+{
+    //TODO: This probably needs locking to be thread-safe...
+
+    std::vector<Sample> retval;
+
+    if (m_currentTraceMemoryIndex == 0)
+        return retval;
+    SampleVector::const_iterator mend = m_traceDiscreteMemory.at(m_currentTraceMemoryIndex).m_endPoint;
+    SampleVector::const_iterator mbegin = mend - m_traceSize;
+    while (mbegin < mend)
+    {
+        retval.push_back(*mbegin);
+        ++mbegin;
+    }
+
+    return retval;
+}
+
 void ScopeVisNG::feed(const SampleVector::const_iterator& cbegin, const SampleVector::const_iterator& end, bool positiveOnly __attribute__((unused)))
 {
     if (m_freeRun) {

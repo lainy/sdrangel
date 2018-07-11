@@ -16,6 +16,9 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include <QColorDialog>
+#include <QFileDialog>
+
+#include <fstream>
 
 #include "glscopenggui.h"
 #include "glscopeng.h"
@@ -769,9 +772,38 @@ void GLScopeNGGUI::on_mem_valueChanged(int value)
 
 void GLScopeNGGUI::on_saveTrace_clicked()
 {
+    std::vector<Sample> samples = m_scopeVis->getCurrentSampleBuffer();
+    if (samples.size() == 0)
+        return; // Shouldn't happen!
 
-    //TODO: Save things.
+    QString fileName = QFileDialog::getSaveFileName(this,
+        tr("Save memory to I/Q file"), ".", tr("SDR I/Q Files (*.sdriq)"), 0, QFileDialog::DontUseNativeDialog);
 
+	if (fileName == "")
+        return;
+    
+    std::ofstream s;
+    s.open(fileName.toStdString().c_str(), std::ios::binary);
+    if (!s.is_open())
+        return;
+
+    int sampleRate = m_glScope->getSampleRate();
+    //int centerFreq = m_glScope->getCenterFrequency();
+    quint64 centerFreq = 0; //TODO
+	s.write((const char *) &sampleRate, sizeof(int));
+	s.write((const char *) &centerFreq, sizeof(quint64));
+    std::time_t startingTimeStamp = time(0); //TODO
+    s.write((const char *) &startingTimeStamp, sizeof(std::time_t));
+
+    std::vector<Sample>::const_iterator begin = samples.begin();
+    std::vector<Sample>::const_iterator end = samples.end();
+    while (begin < end)
+    {
+        s.write(reinterpret_cast<const char*>(&(*begin)), sizeof(Sample));
+        ++begin;
+    }
+
+    s.close();
 }
 
 void GLScopeNGGUI::on_trigMode_currentIndexChanged(int index __attribute__((unused)))
