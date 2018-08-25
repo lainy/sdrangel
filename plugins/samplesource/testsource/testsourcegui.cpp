@@ -44,7 +44,7 @@ TestSourceGui::TestSourceGui(DeviceUISet *deviceUISet, QWidget* parent) :
     m_forceSettings(true),
     m_sampleSource(0),
     m_tickCount(0),
-    m_lastEngineState((DSPDeviceSourceEngine::State)-1)
+    m_lastEngineState(DSPDeviceSourceEngine::StNotStarted)
 {
     qDebug("TestSourceGui::TestSourceGui");
     m_sampleSource = m_deviceUISet->m_deviceSourceAPI->getSampleSource();
@@ -379,11 +379,17 @@ void TestSourceGui::displaySettings()
     ui->amplitudeFine->setValue(amplitudeBits%100);
     displayAmplitude();
     int dcBiasPercent = roundf(m_settings.m_dcFactor * 100.0f);
+    ui->dcBias->setValue((int) dcBiasPercent);
     ui->dcBiasText->setText(QString(tr("%1 %").arg(dcBiasPercent)));
     int iBiasPercent = roundf(m_settings.m_iFactor * 100.0f);
+    ui->iBias->setValue((int) iBiasPercent);
     ui->iBiasText->setText(QString(tr("%1 %").arg(iBiasPercent)));
     int qBiasPercent = roundf(m_settings.m_qFactor * 100.0f);
+    ui->qBias->setValue((int) qBiasPercent);
     ui->qBiasText->setText(QString(tr("%1 %").arg(qBiasPercent)));
+    int phaseImbalancePercent = roundf(m_settings.m_phaseImbalance * 100.0f);
+    ui->phaseImbalance->setValue((int) phaseImbalancePercent);
+    ui->phaseImbalanceText->setText(QString(tr("%1 %").arg(phaseImbalancePercent)));
     ui->autoCorr->setCurrentIndex(m_settings.m_autoCorrOptions);
     ui->sampleSize->blockSignals(false);
     ui->modulation->setCurrentIndex((int) m_settings.m_modulation);

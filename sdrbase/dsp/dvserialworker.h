@@ -32,6 +32,7 @@
 #include "export.h"
 #include "dsp/filtermbe.h"
 #include "dsp/dsptypes.h"
+#include "audio/audiocompressor.h"
 
 class AudioFifo;
 
@@ -135,9 +136,9 @@ public slots:
 
 private:
     //void upsample6(short *in, short *out, int nbSamplesIn);
-    void upsample6(short *in, int nbSamplesIn, unsigned char channels);
     void upsample(int upsampling, short *in, int nbSamplesIn, unsigned char channels);
     void noUpsample(short *in, int nbSamplesIn, unsigned char channels);
+    void setVolumeFactors();
 
     SerialDV::DVController m_dvController;
     volatile bool m_running;
@@ -147,9 +148,13 @@ private:
     //short m_audioSamples[SerialDV::MBE_AUDIO_BLOCK_SIZE * 6 * 2]; // upsample to 48k and duplicate channel
     AudioVector m_audioBuffer;
     uint m_audioBufferFill;
-    short m_upsamplerLastValue;
+    float m_upsamplerLastValue;
     float m_phase;
     MBEAudioInterpolatorFilter m_upsampleFilter;
+    int m_upsampling;
+    float m_volume;
+    float m_upsamplingFactors[7];
+    AudioCompressor m_compressor;
 };
 
 #endif /* SDRBASE_DSP_DVSERIALWORKER_H_ */

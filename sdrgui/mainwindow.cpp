@@ -90,7 +90,7 @@ MainWindow::MainWindow(qtwebapp::LoggerWithFile *logger, const MainParser& parse
 	m_settings(),
     m_masterTabIndex(0),
 	m_dspEngine(DSPEngine::instance()),
-	m_lastEngineState((DSPDeviceSourceEngine::State)-1),
+	m_lastEngineState(DSPDeviceSourceEngine::StNotStarted),
 	m_inputGUI(0),
 	m_sampleRate(0),
 	m_centerFrequency(0),
@@ -1394,7 +1394,7 @@ void MainWindow::on_presetDelete_clicked()
             {
                 m_settings.deletePresetGroup(item->text(0));
 
-                ui->commandTree->clear();
+                ui->presetTree->clear();
 
                 for (int i = 0; i < m_settings.getPresetCount(); ++i) {
                     addPresetToTree(m_settings.getPreset(i));
@@ -1479,7 +1479,7 @@ void MainWindow::sampleSourceChanged()
 
     if (currentSourceTabIndex >= 0)
     {
-        qDebug("MainWindow::on_sampleSource_confirmClicked: tab at %d", currentSourceTabIndex);
+        qDebug("MainWindow::sampleSourceChanged: tab at %d", currentSourceTabIndex);
         DeviceUISet *deviceUI = m_deviceUIs[currentSourceTabIndex];
         deviceUI->m_deviceSourceAPI->saveSourceSettings(m_settings.getWorkingPreset()); // save old API settings
         deviceUI->m_deviceSourceAPI->stopAcquisition();
@@ -1568,7 +1568,7 @@ void MainWindow::sampleSinkChanged()
 
     if (currentSinkTabIndex >= 0)
     {
-        qDebug("MainWindow::on_sampleSink_confirmClicked: tab at %d", currentSinkTabIndex);
+        qDebug("MainWindow::sampleSinkChanged: tab at %d", currentSinkTabIndex);
         DeviceUISet *deviceUI = m_deviceUIs[currentSinkTabIndex];
         deviceUI->m_deviceSinkAPI->saveSinkSettings(m_settings.getWorkingPreset()); // save old API settings
         deviceUI->m_deviceSinkAPI->stopGeneration();

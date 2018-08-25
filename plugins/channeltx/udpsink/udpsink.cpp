@@ -611,7 +611,7 @@ int UDPSink::webapiSettingsPutPatch(
                 SWGSDRangel::SWGChannelSettings& response,
                 QString& errorMessage __attribute__((unused)))
 {
-    UDPSinkSettings settings;
+    UDPSinkSettings settings = m_settings;
     bool frequencyOffsetChanged = false;
 
     if (channelSettingsKeys.contains("sampleFormat")) {
@@ -633,9 +633,6 @@ int UDPSink::webapiSettingsPutPatch(
     }
     if (channelSettingsKeys.contains("fmDeviation")) {
         settings.m_fmDeviation = response.getUdpSinkSettings()->getFmDeviation();
-    }
-    if (channelSettingsKeys.contains("amModFactor")) {
-        settings.m_amModFactor = response.getUdpSinkSettings()->getAmModFactor();
     }
     if (channelSettingsKeys.contains("amModFactor")) {
         settings.m_amModFactor = response.getUdpSinkSettings()->getAmModFactor();

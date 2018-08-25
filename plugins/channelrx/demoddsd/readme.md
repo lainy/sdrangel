@@ -8,9 +8,6 @@ This plugin uses the [DSDcc](https://github.com/f4exb/dsdcc) library that has be
   - dPMR: Another ETSI standard at slower rate (2400 Baud / 6.25 kHz) and FDMA
   - D-Star: developed and promoted by Icom for Amateur Radio customers.
   - Yaesu System Fusion (YSF): developed and promoted by Yaesu for Amateur Radio customers. Voice full rate with DV serial devices is not supported
-
-It can only detect the following standards (no data, no voice):
-
   - NXDN: A joint Icom (IDAS) and Kenwood (Nexedge) standard with 2400 and 4800 Baud versions.
 
 The modulation and standard is automatically detected and switched depending on the Baud rate chosen.
@@ -31,9 +28,11 @@ Note also that this is not supported in Windows because of trouble with COM port
 Alternatively you can use software decoding with Mbelib. Possible copyright issues apart (see next) the audio quality with the DVSI AMBE chip is much better.
 
 ---
-&#9888; Since kernel 4.4.52 the default for FTDI devices (that is in the ftdi_sio kernel module) is not to set it as low latency. This results in the ThumbDV dongle not working anymore because its response is too slow to sustain the normal AMBE packets flow. The solution is to force low latency by changing the variable for your device (ex: /dev/ttyUSB0) as follows:
+&#9888; With kernel 4.4.52 and maybe other 4.4 versions the default for FTDI devices (that is in the ftdi_sio kernel module) is not to set it as low latency. This results in the ThumbDV dongle not working anymore because its response is too slow to sustain the normal AMBE packets flow. The solution is to force low latency by changing the variable for your device (ex: /dev/ttyUSB0) as follows:
 
 `echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB0/latency_timer` or `sudo setserial /dev/ttyUSB0 low_latency`
+
+Newer kernels do not seem to have this issue.
 
 ---
 
@@ -294,6 +293,103 @@ This displays a summary of FICH (Frame Identification CHannel) block data. From 
 
 This is the unique character string assigned to the device by the manufacturer.
 
+<h4>A11.5: NXDN status display</h4>
+
+There are 3 display formats depending on the kind of transmission called RF channel in the NXDN system.
+
+<h5>A11.5.1: RCCH RF channel display</h5>
+
+This is the control channel used in trunked systems and is usually sent continuously.
+
+![DSD NXDN RTDCH status](../../../doc/img/DSDdemod_plugin_nxdn_rcch_status.png)
+
+<h6>A11.5.1.1: RF channel indicator</h5>
+
+This is `RC` for RCCH
+
+<h6>A11.5.2.2: Half/full rate</h5>
+
+Indicator of transmission rate:
+
+  - `H`: half rate (2400 or 4800 S/s). Uses EHR vocoder (AMBE 3600/2450)
+  - `F`: full rate (4800 S/s only). Uses EFR vocoder (AMBE 7200/4400)
+
+<h6>A11.5.1.3: RAN number</h5>
+
+This is the RAN number (0 to 63) associated to the transmission. RAN stands for "Radio Access Number" and for trunked systems this is the site identifier (Site Id) modulo 64.
+
+<h6>A11.5.1.4: Last message type code</h5>
+
+This is the type code of the last message (6 bits) displayed in hexadecimal. The complete list is found in the NXDN documentation `NXDN TS 1-A Version 1.3` section 6.
+
+<h6>A11.5.1.5: Location Id</h5>
+
+This is the 3 byte location Id associated to the site displayed in hexadecimal
+
+<h6>A11.5.1.6: Services available flags</h5>
+
+This is a 16 bit collection of flags to indicate which services are available displayed in hexadecimal. The breakdown is listed in the NXDN documentation `NXDN TS 1-A Version 1.3` section 6.5.33. From MSB to LSB:
+
+  - first nibble (here `B`):
+    - `b15`: Multi-site service 
+    - `b14`: Multi-system service 
+    - `b13`: Location Registration service 
+    - `b12`: Group Registration Service
+  - second nibble (here `3`):
+    - `b11`: Authentication Service 
+    - `b10`: Composite Control Channel Service 
+    - `b9`: Voice Call Service 
+    - `b8`: Data Call Service
+  - third nibble (here `C`):
+    - `b7`: Short Data Call Service 
+    - `b6`: Status Call & Remote Control Service
+    - `b5`: PSTN Network Connection Service
+    - `b4`: IP Network Connection Service
+  - fourth nibble (here `0`) is spare
+
+<h5>A11.5.2: RTCH or RDCH RF channel display</h5>
+
+This is the transmission channel either in a trunked system (RTCH) or conventional system (RDCH).
+
+![DSD NXDN RTDCH status](../../../doc/img/DSDdemod_plugin_nxdn_rtdch_status.png)
+
+<h6>A11.5.2.1: RF channel indicator</h5>
+
+It can be either `RT` for RTCH or `RD` for a RDCH channel
+
+<h6>A11.5.2.2: Half/full rate</h5>
+
+Indicator of transmission rate:
+
+  - `H`: half rate (2400 or 4800 S/s). Uses EHR vocoder (AMBE 3600/2450)
+  - `F`: full rate (4800 S/s only). Uses EFR vocoder (AMBE 7200/4400)
+
+<h6>A11.5.2.3: RAN number</h5>
+
+This is the RAN number (0 to 63) associated to the transmission. RAN stands for "Radio Access Number" and has a different usage in conventional or trunked systems:
+
+  - Conventional (RDCH): this is used as a selective squelch. Code `0` means always unmute.
+  - Trunked (RTCH): this is the site identifier (Site Id) modulo 64.
+
+<h6>A11.5.2.4: Last message type code</h5>
+
+This is the type code of the last message (6 bits) displayed in hexadecimal. The complete list is found in the NXDN documentation `NXDN TS 1-A Version 1.3` section 6.
+
+<h6>A11.5.2.5: Source Id</h5>
+
+This is the source of transmission identification code on two bytes (0 to 65353) displayed in decimal.
+
+<h6>A11.5.2.6: Destination Id</h5>
+
+This is the destination of transmission identification code on two bytes (0 to 65353) displayed in decimal. It is prefixed by a group call indicator:
+
+  - `G`: this is a group call
+  - `I`: this is an individual call
+
+<h5>A11.5.3: Unknown or erroneous data display</h5>
+
+In this case the display is simply "RU" for "unknown"
+
 <h3>B section: digital</h3>
 
 <h4>B.1: FM signal scope</h4>
@@ -388,8 +484,9 @@ This can be one of the following:
   - `+D-STAR_HD`: non-inverted D-Star header frame encountered
   - `-D-STAR_HD`: inverted D-Star header frame encountered
   - `+dPMR`: non-inverted dPMR non-packet frame
-  - `+NXDN`: non-inverted NXDN frame (detection only)
-  - `+YSF`: non-inverted Yaesu System Fusion frame (detection only)
+  - `+NXDN`: non-inverted NXDN frame
+  - `-NXDN`: inverted NXDN frame (not likely)
+  - `+YSF`: non-inverted Yaesu System Fusion frame
 
 <h4>B.4: Matched filter toggle</h4>
  
@@ -477,12 +574,13 @@ This button tunes the persistence decay of the points displayer on B.1. The trac
 
 <h4>B.17: Maximum expected FM deviation</h4>
 
-This is the one side deviation in kHz (&#177;) leading to maximum (100%) deviation. You should adjust this value to make the figure on the signal scope fill the entire screen as shown in the screenshots above. The typical deviations by mode for a unit gain (1.0 at B.18) are:
+This is the one side deviation in kHz (&#177;) leading to maximum (100%) deviation at the discriminator output. The correct value depends on the maximum deviation imposed by the modulation scheme with some guard margin. In practice you should adjust this value to make the figure on the signal scope fill the entire screen as shown in the screenshots above. The typical deviations by mode for a unit gain (1.0 at B.18) are:
   
   - DMR: &#177;5.4k
   - dPMR: &#177;2.7k
   - D-Star: &#177;3.5k
   - YSF: &#177;7.0k
+  - NXDN: &#177;2.7k
 
 <h4>B.18: Gain after discriminator</h4>
 

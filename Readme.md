@@ -1,10 +1,10 @@
 ![SDR Angel banner](doc/img/sdrangel_banner.png)
 
-**SDRangel** is an Open Source Qt5 / OpenGL 3.0+ (Linux) SDR and signal analyzer frontend to various hardware.
+**SDRangel** is an Open Source Qt5 / OpenGL 3.0+ SDR and signal analyzer frontend to various hardware.
 
 **Check the discussion group** [here](https://groups.io/g/sdrangel)
 
-**&#9888; Warning**: Windows distribution is provided as a by product of the Qt toolchain. The platform of choice to run SDRangel is definitely Linux. You are encouraged to use the group to seek help from other Windows users but the author cannot give help or any support for problems related to running the software on Windows. Issues specific to Windows problems opened on Github will be closed systematically. Windows distribution may be discontinued in the future. 
+**&#9888; Warning**: Windows distribution is discontinued at version 4.0.0. This is the last version with a Windows build. 
 
 <h1>Source code</h1>
 
@@ -39,7 +39,7 @@ From version 2 SDRangel can integrate more than one hardware device running conc
 
 From version 3 transmission or signal generation is supported for BladeRF, HackRF (since version 3.1), LimeSDR (since version 3.4) and PlutoSDR (since version 3.7.8) using a sample sink plugin. These plugins are:
 
-  - [BladeRF output plugin](https://github.com/f4exb/sdrangel/tree/dev/plugins/samplesink/bladerfoutput) limited support in Windows
+  - [BladeRF output plugin](https://github.com/f4exb/sdrangel/tree/dev/plugins/samplesink/bladerfoutput)
   - [HackRF output plugin](https://github.com/f4exb/sdrangel/tree/dev/plugins/samplesink/hackrfoutput)
   - [LimeSDR output plugin](https://github.com/f4exb/sdrangel/tree/dev/plugins/samplesink/limesdroutput)
   - [PlutoSDR output plugin](https://github.com/f4exb/sdrangel/tree/dev/plugins/samplesink/plutosdroutput)
@@ -244,21 +244,13 @@ This is the `demoddsd` plugin. At present it can be used to decode the following
   - dPMR
   - D-Star
   - Yaesu System Fusion (YSF)
+  - NXDN
 
 It is based on the [DSDcc](https://github.com/f4exb/dsdcc) C++ library which is a rewrite of the original [DSD](https://github.com/szechyjs/dsd) program. So you will need to have DSDcc installed in your system. Please follow instructions in [DSDcc readme](https://github.com/f4exb/dsdcc/blob/master/Readme.md) to build and install DSDcc. If you install it in a custom location say `/opt/install/dsdcc` you will need to add these defines to the cmake command: `-DLIBDSDCC_INCLUDE_DIR=/opt/install/dsdcc/include/dsdcc -DLIBDSDCC_LIBRARIES=/opt/install/dsdcc/lib/libdsdcc.so`
 
 If you have one or more serial devices interfacing the AMBE3000 chip in packet mode you can use them to decode AMBE voice frames. For that purpose you will need to compile with [SerialDV](https://github.com/f4exb/serialDV) support. Please refer to this project Readme.md to compile and install SerialDV. If you install it in a custom location say `/opt/install/serialdv` you will need to add these defines to the cmake command: `-DLIBSERIALDV_INCLUDE_DIR=/opt/install/serialdv/include/serialdv -DLIBSERIALDV_LIBRARY=/opt/install/serialdv/lib/libserialdv.so` Also your user must be a member of group `dialout` to be able to use the dongle.
 
 Although such serial devices work with a serial interface at 400 kb in practice maybe for other reasons they are capable of handling only one conversation at a time. The software will allocate the device dynamically to a conversation with an inactivity timeout of 1 second so that conversations do not get interrupted constantly making the audio output too choppy. In practice you will have to have as many devices connected to your system as the number of conversations you would like to be handled in parallel. 
-
-Note that this is not supported in Windows because of trouble with COM port support (contributors welcome!).
-
----
-&#9888; Since kernel 4.4.52 the default for FTDI devices (that is in the ftdi_sio kernel module) is not to set it as low latency. This results in the ThumbDV dongle not working anymore because its response is too slow to sustain the normal AMBE packets flow. The solution is to force low latency by changing the variable for your device (ex: /dev/ttyUSB0) as follows:
-
-`echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB0/latency_timer` or `sudo setserial /dev/ttyUSB0 low_latency`
-
----
 
 Alternatively you can use [mbelib](https://github.com/szechyjs/mbelib) but mbelib comes with some copyright issues (see next). If you have mbelib installed in a custom location, say `/opt/install/mbelib` you will need to add these defines to the cmake command: `-DLIBMBE_INCLUDE_DIR=/opt/install/mbelib/include -DLIBMBE_LIBRARY=/opt/install/mbelib/lib/libmbe.so`
 
@@ -275,10 +267,11 @@ If you are not comfortable with this just do not install DSDcc and/or mbelib and
 
 <h1>Software distributions</h1>
 
-In the [releases](https://github.com/f4exb/sdrangel/releases) section one can find binary distributions for some common systems:
+In the [releases](https://github.com/f4exb/sdrangel/releases) section one can find binary distributions for some Debian based distributions:
 
-  - Debian x86_64 (Ubuntu 16.04, Ubuntu 17.10, Debian Stretch)
-  - Windows 32 bit (runs also in 64 bit Windows) 
+  - Ubuntu 18.04 (Bionic)
+  - Ubuntu 16.04 (Xenial)
+  - Debian Stretch
 
 <h2>Debian distributions</h2>
 
@@ -312,9 +305,11 @@ The default CPU governor is now `powersave` which exhibits excessive CPU usage w
   
 <h2>Windows distribution</h2>
 
+The last Windows distribution is for 4.0.0.
+
 This is the archive of the complete binary distribution that expands to the `sdrangel` directory. You can install it anywhere you like and click on `sdrangel.exe` to start.
 
-<b>&#9888; Windows distribution is provided as a by product thanks to the Qt toolchain. The platform of choice to run SDRangel is definitely Linux and very little support can be given for the Windows distribution.</b>
+<b>&#9888; Windows distribution was provided as a by product thanks to the Qt toolchain. The platform of choice to run SDRangel is definitely Linux and very little support can be given for this Windows distribution.</b>
 
 <h1>Software build</h1>
 
@@ -323,7 +318,7 @@ This is the archive of the complete binary distribution that expands to the `sdr
 To be sure you will need at least Qt version 5.5. It definitely does not work with versions earlier than 5.3 but neither 5.3 nor 5.4 were tested.
 
   - Linux builds are made with 5.5.1 (Xenial) and 5.9 (Artful, Stretch)
-  - Windows build is made with 5.10.1 in 32 bit mode and has Qt ANGLE support (OpenGL emulation with DirectX)
+  - Windows build was made with 5.10.1 in 32 bit mode and has Qt ANGLE support (OpenGL emulation with DirectX)
 
 <h2>24 bit DSP</h2>
 
@@ -350,6 +345,13 @@ Install cmake version 3:
   - `sudo apt-get update`
   - `sudo apt-get remove cmake` (if already installed)
   - `sudo apt-get install cmake`
+
+<h3>Prerequisites for 16.04 LTS</h3>
+
+For DATV demodulator support you need to install the ffmpeg v.3 suite. Therefore you will need to add this PPA to the sources list using this command:
+`sudo add-apt-repository ppa:jonathonf/ffmpeg-3`
+
+Then do `sudo apt-get update` and go to the next step. Alternatively if you have an older version of ffmpeg suite already installed just do `sudo apt-get dist-upgrde`.
 
 <h3>With newer versions just do:</h3>
 
@@ -403,16 +405,16 @@ Then you should be all set to build the software with `cmake` and `make` as disc
 
   - Note for udev rules: the same as for openSUSE applies. This is detailed in the previous paragraph for openSUSE.
 
-<h2>Manjaro</h2>
+<h2>Arch Linux / Manjaro</h2>
 
-Tested with the 15.09 version with LXDE desktop (community supported). The exact desktop environment should not matter anyway. Since Manjaro is Arch Linux based prerequisites should be similar for Arch and all derivatives.
+Tested with the 15.09 version with LXDE desktop (community supported). The exact desktop environment should not matter anyway. Prerequisites should be similar for Arch and all derivatives.
 
 `sudo pacman -S cmake pkg-config fftw qt5-multimedia qt5-tools qt5-base libusb boost boost-libs pulseaudio`
 
 Then you should be all set to build the software with `cmake` and `make` as discussed earlier.
 
   - Note1 for udev rules: the same as for openSUSE and Fedora applies.
-  - Note2: A package has been created in the AUR (thanks Mikos!), see: [sdrangel-git](https://aur.archlinux.org/packages/sdrangel-git). It is based on the `205fee6` commit of 8th December 2015.
+  - Note2: Two package are avaliable in the AUR (thanks Mikos!), [sdrangel](https://aur.archlinux.org/packages/sdrangel), which provides the lastest tagged release (stable), and [sdrangel-git](https://aur.archlinux.org/packages/sdrangel-git), which builds the latest commit from this repository (unstable).
 
 <h2>Windows</h2>
 
@@ -445,8 +447,7 @@ You can uninstall the software with `make uninstall` or `sudo make uninstall` fr
 <h1>Limitations</h1>
 
   - Your hardware. Still SDRangel is relatively conservative on computer resources.
-  - OpenGL 3+ (Linux)
-  - OpenGL 4.3+ (Windows) for OpenGL native support however the Qt Angle framework may be able to make it work on systems supporting Direct-X only.
+  - OpenGL 3+
 
 <h1>Features</h1>
 

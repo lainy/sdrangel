@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>331</width>
-    <height>60</height>
+    <width>378</width>
+    <height>59</height>
    </rect>
   </property>
   <property name="font">
@@ -104,19 +104,49 @@
       </widget>
      </item>
      <item>
-      <widget class="ButtonSwitch" name="histogram">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
+      <widget class="QDial" name="traceIntensity">
+       <property name="maximumSize">
         <size>
          <width>24</width>
          <height>24</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Trace intensity</string>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>50</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clearSpectrum">
+       <property name="toolTip">
+        <string>Clear spectrum histogram</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/res.qrc">
+         <normaloff>:/clear.png</normaloff>:/clear.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ButtonSwitch" name="histogram">
        <property name="toolTip">
         <string>Display phosphor effect spectrum</string>
        </property>
@@ -140,18 +170,6 @@
      </item>
      <item>
       <widget class="ButtonSwitch" name="maxHold">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Display max hold</string>
        </property>
@@ -175,18 +193,6 @@
      </item>
      <item>
       <widget class="ButtonSwitch" name="current">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Display live spectrum</string>
        </property>
@@ -210,18 +216,6 @@
      </item>
      <item>
       <widget class="ButtonSwitch" name="invert">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Exchange waterfall and histogram</string>
        </property>
@@ -245,18 +239,6 @@
      </item>
      <item>
       <widget class="ButtonSwitch" name="waterfall">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Display waterfall</string>
        </property>
@@ -283,18 +265,6 @@
      </item>
      <item>
       <widget class="ButtonSwitch" name="grid">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Toggle the scale grid</string>
        </property>
@@ -341,10 +311,26 @@
        </property>
       </widget>
      </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
    </item>
    <item row="2" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <item>
       <widget class="QComboBox" name="fftWindow">
        <property name="sizePolicy">
@@ -355,13 +341,13 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>30</width>
+         <width>50</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>100</width>
+         <width>50</width>
          <height>16777215</height>
         </size>
        </property>
@@ -373,32 +359,32 @@
        </property>
        <item>
         <property name="text">
-         <string>Bartlett</string>
+         <string>Bart</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Blackman-Harris</string>
+         <string>B-H</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Flat Top</string>
+         <string>FT</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Hamming</string>
+         <string>Ham</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Hanning</string>
+         <string>Han</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Rectangle</string>
+         <string>Rec</string>
         </property>
        </item>
       </widget>
@@ -410,6 +396,18 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>45</width>
+         <height>16777215</height>
+        </size>
        </property>
        <property name="toolTip">
         <string>FFT size</string>
@@ -459,8 +457,14 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>50</width>
          <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="toolTip">
@@ -469,6 +473,21 @@
        <property name="sizeAdjustPolicy">
         <enum>QComboBox::AdjustToContents</enum>
        </property>
+       <item>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>-5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>-10</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
@@ -481,8 +500,14 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>45</width>
          <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>45</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="toolTip">
@@ -491,61 +516,156 @@
        <property name="sizeAdjustPolicy">
         <enum>QComboBox::AdjustToContents</enum>
        </property>
+       <item>
+        <property name="text">
+         <string>100</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>50</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>5</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="clearSpectrum">
+      <widget class="QComboBox" name="averagingMode">
        <property name="minimumSize">
         <size>
-         <width>24</width>
-         <height>24</height>
+         <width>50</width>
+         <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>24</width>
-         <height>24</height>
+         <width>50</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="toolTip">
-        <string>Clear spectrum histogram</string>
+        <string>Averaging type</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>No</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Mov</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Fix</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="averaging">
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>45</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Number of averaging samples</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>10</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>20</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>50</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>100</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>200</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>500</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1k</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="linscale">
+       <property name="toolTip">
+        <string>Logarithmic / Linear scale selection</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="icon">
         <iconset resource="../resources/res.qrc">
-         <normaloff>:/clear.png</normaloff>:/clear.png</iconset>
+         <normaloff>:/logarithmic.png</normaloff>
+         <normalon>:/linear.png</normalon>:/logarithmic.png</iconset>
        </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDial" name="traceIntensity">
-       <property name="maximumSize">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>24</width>
-         <height>24</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
-       <property name="toolTip">
-        <string>Trace intensity</string>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="pageStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>50</number>
-       </property>
-      </widget>
+      </spacer>
      </item>
     </layout>
    </item>

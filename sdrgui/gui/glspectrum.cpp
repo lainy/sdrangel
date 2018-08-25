@@ -24,8 +24,11 @@
 #include <QOpenGLFunctions>
 #include <QPainter>
 #include "gui/glspectrum.h"
+#include "util/messagequeue.h"
 
 #include <QDebug>
+
+MESSAGE_CLASS_DEFINITION(GLSpectrum::MsgReportSampleRate, Message)
 
 GLSpectrum::GLSpectrum(QWidget* parent) :
 	QGLWidget(parent),
@@ -36,8 +39,10 @@ GLSpectrum::GLSpectrum(QWidget* parent) :
 	m_centerFrequency(100000000),
 	m_referenceLevel(0),
 	m_powerRange(100),
+	m_linear(false),
 	m_decay(0),
 	m_sampleRate(500000),
+	m_timingRate(1),
 	m_fftSize(512),
 	m_displayGrid(true),
 	m_displayGridIntensity(5),
@@ -59,7 +64,8 @@ GLSpectrum::GLSpectrum(QWidget* parent) :
     m_displayHistogram(true),
     m_displayChanged(false),
     m_matrixLoc(0),
-    m_colorLoc(0)
+    m_colorLoc(0),
+    m_messageQueueToGUI(0)
 {
 	setAutoFillBackground(false);
 	setAttribute(Qt::WA_OpaquePaintEvent, true);
@@ -192,8 +198,18 @@ void GLSpectrum::setHistoStroke(int stroke)
 void GLSpectrum::setSampleRate(qint32 sampleRate)
 {
 	m_sampleRate = sampleRate;
+	if (m_messageQueueToGUI) {
+	    m_messageQueueToGUI->push(new MsgReportSampleRate(m_sampleRate));
+	}
 	m_changesPending = true;
 	update();
+}
+
+void GLSpectrum::setTimingRate(qint32 timingRate)
+{
+    m_timingRate = timingRate;
+    m_changesPending = true;
+    update();
 }
 
 void GLSpectrum::setDisplayWaterfall(bool display)
@@ -274,6 +290,13 @@ void GLSpectrum::setDisplayTraceIntensity(int intensity)
 		m_displayTraceIntensity = 0;
 	}
 	update();
+}
+
+void GLSpectrum::setLinear(bool linear)
+{
+    m_linear = linear;
+    m_changesPending = true;
+    update();
 }
 
 void GLSpectrum::addChannelMarker(ChannelMarker* channelMarker)
@@ -1043,15 +1066,15 @@ void GLSpectrum::applyChanges()
 
 		if(m_sampleRate > 0)
 		{
-			float scaleDiv = (float)m_sampleRate * (m_ssbSpectrum ? 2 : 1);
+			float scaleDiv = ((float)m_sampleRate / (float)m_timingRate) * (m_ssbSpectrum ? 2 : 1);
 
 			if(!m_invertedWaterfall)
 			{
-				m_timeScale.setRange(Unit::Time, (waterfallHeight * m_fftSize) / scaleDiv, 0);
+				m_timeScale.setRange(m_timingRate > 1 ? Unit::TimeHMS : Unit::Time, (waterfallHeight * m_fftSize) / scaleDiv, 0);
 			}
 			else
 			{
-				m_timeScale.setRange(Unit::Time, 0, (waterfallHeight * m_fftSize) / scaleDiv);
+				m_timeScale.setRange(m_timingRate > 1 ? Unit::TimeHMS : Unit::Time, 0, (waterfallHeight * m_fftSize) / scaleDiv);
 			}
 		}
 		else
@@ -1060,7 +1083,13 @@ void GLSpectrum::applyChanges()
 		}
 
 		m_powerScale.setSize(histogramHeight);
-		m_powerScale.setRange(Unit::Decibel, m_referenceLevel - m_powerRange, m_referenceLevel);
+
+		if (m_linear) {
+            m_powerScale.setRange(Unit::Scientific, m_referenceLevel - m_powerRange, m_referenceLevel);
+		} else {
+		    m_powerScale.setRange(Unit::Decibel, m_referenceLevel - m_powerRange, m_referenceLevel);
+		}
+
 		leftMargin = m_timeScale.getScaleWidth();
 
 		if(m_powerScale.getScaleWidth() > leftMargin)
@@ -1141,26 +1170,26 @@ void GLSpectrum::applyChanges()
 
 		if(m_sampleRate > 0)
 		{
-			float scaleDiv = (float)m_sampleRate * (m_ssbSpectrum ? 2 : 1);
+			float scaleDiv = ((float)m_sampleRate / (float)m_timingRate) * (m_ssbSpectrum ? 2 : 1);
 
 			if(!m_invertedWaterfall)
 			{
-				m_timeScale.setRange(Unit::Time, (waterfallHeight * m_fftSize) / scaleDiv, 0);
+				m_timeScale.setRange(m_timingRate > 1 ? Unit::TimeHMS : Unit::Time, (waterfallHeight * m_fftSize) / scaleDiv, 0);
 			}
 			else
 			{
-				m_timeScale.setRange(Unit::Time, 0, (waterfallHeight * m_fftSize) / scaleDiv);
+				m_timeScale.setRange(m_timingRate > 1 ? Unit::TimeHMS : Unit::Time, 0, (waterfallHeight * m_fftSize) / scaleDiv);
 			}
 		}
 		else
 		{
 			if(!m_invertedWaterfall)
 			{
-				m_timeScale.setRange(Unit::Time, 10, 0);
+				m_timeScale.setRange(m_timingRate > 1 ? Unit::TimeHMS : Unit::Time, 10, 0);
 			}
 			else
 			{
-				m_timeScale.setRange(Unit::Time, 0, 10);
+				m_timeScale.setRange(m_timingRate > 1 ? Unit::TimeHMS : Unit::Time, 0, 10);
 			}
 		}
 

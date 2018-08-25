@@ -9,9 +9,14 @@ This plugin can be used to analyze the complex signal received in its passband. 
   - Real part
   - Imaginary part
   - Magnitude linear
+  - Power i.e. squared magnitude linear
   - Power i.e. squared magnitude log (dB)
   - Phase
   - Phase derivative (instant frequency)
+  - BPSK symbol mapping
+  - QPSK symbol mapping
+  - 8-PSK symbol mapping
+  - 16-PSK symbol mapping
   
 The same waveforms can be used to trigger the scope trace
 
@@ -211,6 +216,7 @@ To construct a trace which represents real values the incoming complex signal mu
   - Real: take the real part
   - Imag: take the imaginary part
   - Mag: calculate magnitude in linear representation. This is just the module of the complex sample
+  - MagSq: calculate power in linear representation. This is the squared module of the complex sample
   - MagDB: calculate power in log representation as 10*log10(x) or decibel (dB) representation. This is the squared module of the complex sample expressed in decibels
   - Phi: instantaneous phase. This is the argument of the complex sample.
   - dPhi: instantaneous derivative of the phase. This is the difference of arguments between successive samples thus represents the instantaneous frequency.
@@ -263,6 +269,10 @@ The signal is synchronized with the PLL in 4 phase mode (locker icon is green).
   
 ![Channel Analyzer NG plugin scope1 controls](../../../doc/img/ChAnalyzerNG_plugin_overlay_dB.png)
 
+**Note3**: in the MagSq mode when the trace is selected (1) the display overlay on the top right of the trace shows 2 figures in scientific notation. From left to right: peak power and average power.
+  
+![Channel Analyzer NG plugin scope2 controls](../../../doc/img/ChAnalyzerNG_plugin_overlay_lin.png)
+
 <h3>5. Source select</h3>
 
 This is for future use when more than one incoming complex signals can be applied. The signal index appears on the right of the button
@@ -283,6 +293,7 @@ The top slider is a coarse adjustment. Each step moves the trace by an amount th
 
   - Real, Imag: 0.01
   - Mag: 0.005
+  - MagSq: 0.005
   - MagDB: 1 dB
   - Phi, dPhi: 0.01
 
@@ -290,6 +301,7 @@ The bottom slider is a fine adjustment. Each step moves the trace by an amount t
 
   - Real, Imag: 50.0E-6
   - Mag: 25.0sE-6
+  - MagSq: 25.0sE-6
   - MagDB: 0.01 dB
   - Phi, dPhi: 50.0E-6
 
@@ -369,16 +381,18 @@ This pair of sliders let you adjust the trigger level, The level appears on the 
 The top slider is a coarse adjustment. Each step moves the trigger level by an amount that depends on the projection type:
 
   - Real, Imag: 0.01
-  - Mag: 0.005
+  - Mag: 0.01
+  - MagSq: 0.01
   - MagDB: 1 dB
   - Phi, dPhi: 0.01
   
 The bottom slider is a fine adjustment. Each step moves the trigger level by an amount that depends on the projection type:
 
-  - Real, Imag: 50.0E-6
-  - Mag: 25.0sE-6
+  - Real, Imag: 20.0E-6
+  - Mag: 20.0sE-6
+  - MagSq: 20.0sE-6
   - MagDB: 0.01 dB
-  - Phi, dPhi: 50.0E-6
+  - Phi, dPhi: 20.0E-6
   
 <h3>10: Trigger delay</h3>
 

@@ -370,6 +370,8 @@ void SSBMod::pullAF(Complex& sample)
         break;
     case SSBModSettings::SSBModInputNone:
     default:
+        sample.real(0.0f);
+        sample.imag(0.0f);
         break;
     }
 
@@ -879,7 +881,7 @@ int SSBMod::webapiSettingsPutPatch(
                 SWGSDRangel::SWGChannelSettings& response,
                 QString& errorMessage __attribute__((unused)))
 {
-    SSBModSettings settings;
+    SSBModSettings settings = m_settings;
     bool frequencyOffsetChanged = false;
 
     if (channelSettingsKeys.contains("inputFrequencyOffset"))
